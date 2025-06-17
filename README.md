@@ -30,13 +30,13 @@ pip install -r requirements.txt
 ### 3. Настрой .env
 Создай файл .env в корне проекта и заполни:
 
-#### SECRET_KEY=your_flask_secret_key
-#### CATALOG_ID=your_yandex_catalog_id
-#### OAUTH_TOKEN=your_yandex_oauth_token
-#### MY_API_KEY=your_api_key_for_api_access
-#### BOT_TOKEN=your_telegram_bot_token
-#### OPENAI_API_KEY=your_openai_key
-#### Важно: Не публикуй файл .env — он уже добавлен в .gitignore!
+### SECRET_KEY=your_flask_secret_key
+### CATALOG_ID=your_yandex_catalog_id
+### OAUTH_TOKEN=your_yandex_oauth_token
+### MY_API_KEY=your_api_key_for_api_access
+### BOT_TOKEN=your_telegram_bot_token
+### OPENAI_API_KEY=your_openai_key
+### Важно: Не публикуй файл .env — он уже добавлен в .gitignore!
 
 ### 4. Запусти сайт и бота (в отдельных терминалах)
 Сайт
@@ -66,20 +66,22 @@ POST /api/generate
 Ответ: файл-изображение (image/jpeg)
 
 ### 📁 Структура проекта
-.
-├── app.py                # Flask-приложение
-├── bot.py                # Telegram-бот (aiogram)
-├── logo_generator.py     # Генерация через Yandex ART API
-├── token_updater.py      # Обновление IAM токена
-├── models.py             # Модели пользователей и истории (SQLAlchemy)
-├── run_all.py            # Одновременный запуск сайта и бота
-├── requirements.txt
-├── .env
-├── .gitignore
-└── templates/
-    ├── index.html
-    ├── login.html
-    └── register.html
+### .
+### ├── app.py                # Flask-приложение
+### ├── bot.py                # Telegram-бот (aiogram)
+### ├── logo_generator.py     # Генерация через Yandex ART API
+### ├── token_updater.py      # Обновление IAM токена
+### ├── models.py             # Модели пользователей и истории (SQLAlchemy)
+### ├── run_all.py            # Одновременный запуск сайта и бота
+### ├── requirements.txt
+### ├── .env
+### ├── .gitignore
+### └── templates/
+###     ├── index.html
+###     ├── login.html
+###     └── register.html
+
+
 ### 💡 TODO / Планы
 Настроить лимиты и защиту API для production
 Сделать мобильную адаптацию интерфейса

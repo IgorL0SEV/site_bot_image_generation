@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from openai import OpenAI
 
-from aiogram import Bot, Dispatcher, types, F
+from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -28,6 +28,13 @@ class ImageStates(StatesGroup):
     waiting_for_prompt = State()
 
 @dp.message(Command("start"))
+async def start_handler(message: types.Message):
+    await message.answer(
+        "👋 Привет! Я бот с искусственным интеллектом.\n"
+        "Напиши что-нибудь, чтобы поговорить со мной, или используй команду /image для генерации картинки."
+    )
+
+@dp.message(Command("help"))
 async def start_handler(message: types.Message):
     await message.answer(
         "👋 Привет! Я бот с искусственным интеллектом.\n"

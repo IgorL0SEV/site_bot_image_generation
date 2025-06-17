@@ -137,6 +137,7 @@ env.bak/
 venv.bak/
 site.db
 results/
+.iam_token_cache
 
 # Spyder project settings
 .spyderproject

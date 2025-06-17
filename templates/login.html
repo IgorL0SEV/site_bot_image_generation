@@ -7,16 +7,22 @@
 </head>
 <body class="bg-light">
 <div class="container mt-5">
-    <h3>Вход</h3>
-    <form method="post">
-        <input name="username" class="form-control mb-2" placeholder="Имя пользователя" required>
-        <input name="password" type="password" class="form-control mb-2" placeholder="Пароль" required>
-        <button class="btn btn-primary">Войти</button>
-        <a href="{{ url_for('register') }}" class="btn btn-link">Регистрация</a>
+    <h3 class="text-center">Yandex ART LOGOgenerator</h3>
+    <h4 class="text-center">___</h4>
+    <h3 class="text-center">Вход</h3>
+    <form method="post" class="mx-auto text-center" style="max-width: 340px;">
+        <input name="username" class="form-control mb-2 w-75 mx-auto" placeholder="Имя пользователя" required>
+        <input name="password" type="password" class="form-control mb-2 w-75 mx-auto" placeholder="Пароль" required>
+        <button class="btn btn-primary w-50">Войти</button>
+        <a href="{{ url_for('register') }}" class="btn btn-link d-block">Регистрация</a>
     </form>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <div class="alert alert-danger mt-2">{{ messages[0] }}</div>
+        <div
+          class="alert mt-2 mx-auto text-center"
+          style="max-width: 350px; min-width: 200px; height: 50px; padding: 2px 4px; background-color: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; display: flex; align-items: center; justify-content: center; font-size: 11px;">
+            {{ messages[0] }}
+        </div>
       {% endif %}
     {% endwith %}
 </div>

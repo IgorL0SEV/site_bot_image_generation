@@ -30,13 +30,13 @@ pip install -r requirements.txt
 ### 3. Настрой .env
 Создай файл .env в корне проекта и заполни:
 
-SECRET_KEY=your_flask_secret_key
-CATALOG_ID=your_yandex_catalog_id
-OAUTH_TOKEN=your_yandex_oauth_token
-MY_API_KEY=your_api_key_for_api_access
-BOT_TOKEN=your_telegram_bot_token
-OPENAI_API_KEY=your_openai_key
-Важно: Не публикуй файл .env — он уже добавлен в .gitignore!
+#### SECRET_KEY=your_flask_secret_key
+#### CATALOG_ID=your_yandex_catalog_id
+#### OAUTH_TOKEN=your_yandex_oauth_token
+#### MY_API_KEY=your_api_key_for_api_access
+#### BOT_TOKEN=your_telegram_bot_token
+#### OPENAI_API_KEY=your_openai_key
+#### Важно: Не публикуй файл .env — он уже добавлен в .gitignore!
 
 ### 4. Запусти сайт и бота (в отдельных терминалах)
 Сайт

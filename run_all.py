@@ -1,9 +1,12 @@
+# Запускает параллельно Flask и Telegram bot
+# Telegram bot запускается через bot_runner.py
+# bot_runner.py перезапускает Telegram bot в случае вылетов, сбоев сети
+
 import threading
 import subprocess
 import sys
 
 print("PYTHON:", sys.executable)
-
 
 def run_flask():
     try:
@@ -11,13 +14,12 @@ def run_flask():
     except Exception as e:
         print(f"[Flask] Ошибка: {e}")
 
-
 def run_bot():
+    # Используем bot_runner.py вместо bot.py
     try:
-        subprocess.run([sys.executable, "bot.py"], check=True)
+        subprocess.run([sys.executable, "bot_runner.py"], check=True)
     except Exception as e:
-        print(f"[Bot] Ошибка: {e}")
-
+        print(f"[BotRunner] Ошибка: {e}")
 
 if __name__ == "__main__":
     t1 = threading.Thread(target=run_flask)
@@ -28,3 +30,4 @@ if __name__ == "__main__":
 
     t1.join()
     t2.join()
+

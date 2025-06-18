@@ -4,15 +4,40 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="71ce30b1-b073-4309-90d6-4218bf361580" name="Changes" comment="" />
+    <list default="true" id="71ce30b1-b073-4309-90d6-4218bf361580" name="Changes" comment="">
+      <change beforePath="D:/PycharmProjects/site_bot_image_generation/.idea/misc.xml" beforeDir="false" afterPath="D:/PycharmProjects/site_bot_image_generation/.idea/misc.xml" afterDir="false" />
+      <change beforePath="D:/PycharmProjects/site_bot_image_generation/.idea/workspace.xml" beforeDir="false" afterPath="D:/PycharmProjects/site_bot_image_generation/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 4
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="D:/PycharmProjects/site_bot_image_generation" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "IgorL0SEV"
+  }
 }]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/IgorL0SEV/site_bot_image_generation",
+    "accountId": "72cd6f35-50ce-4a52-a63b-ba687d8a2f3e"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
   <component name="ProjectId" id="2ydGAE424MF6isu1gdgIOqi534g" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -20,11 +45,19 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.app.executor": "Run",
     "Python.bot.executor": "Run",
+    "Python.run_all.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Merging main",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\PycharmProjects\site_bot_image_generation\instance\results" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

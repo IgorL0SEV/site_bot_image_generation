@@ -138,6 +138,8 @@ venv.bak/
 site.db
 results/
 .iam_token_cache
+.idea/
+
 
 # Spyder project settings
 .spyderproject

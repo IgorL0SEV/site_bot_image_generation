@@ -2,83 +2,86 @@ import os
 import time
 import base64
 import requests
+import logging
 from dotenv import load_dotenv
 from token_updater import get_iam_token
 
+# --- Логирование ошибок и прогресса ---
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Загружаем переменные окружения из файла .env (для CATALOG_ID и др.)
 load_dotenv()
-
-# Берём CATALOG_ID из .env (это ID каталога Yandex Cloud)
 CATALOG_ID = os.getenv("CATALOG_ID")
 
-# Проверка, чтобы избежать неожиданных тихих ошибок — без CATALOG_ID не продолжаем
 if not CATALOG_ID:
     raise Exception("❌ Не найден CATALOG_ID в .env! Проверьте конфигурацию.")
 
 def generate_logo(prompt: str) -> bytes:
     """
-    Генерирует изображение логотипа через Yandex Cloud API по текстовому описанию.
-
-    Аргументы:
-        prompt (str): Описание логотипа, которое будет отправлено в Yandex ART.
-
-    Возвращает:
-        bytes: Сгенерированное изображение (готово для сохранения на диск или отправки пользователю).
-
-    Исключения:
-        Exception: Если API Яндекса вернул ошибку или нет результата.
+    Генерация логотипа через Yandex ART API с устойчивостью к сбоям.
+    Выполняется polling + повторные попытки при временных ошибках.
     """
-    # Получаем IAM-токен. Если просрочен — автоматически обновляется (реализовано в get_iam_token)
     iam_token = get_iam_token()
-
-    # Формируем запрос на генерацию изображения
     url = "https://llm.api.cloud.yandex.net/foundationModels/v1/imageGenerationAsync"
     headers = {
         "Authorization": f"Bearer {iam_token}",
         "Content-Type": "application/json"
     }
     data = {
-        "modelUri": f"art://{CATALOG_ID}/yandex-art/latest",  # Используем актуальную модель Yandex ART
+        "modelUri": f"art://{CATALOG_ID}/yandex-art/latest",
         "generationOptions": {
-            "seed": str(int(time.time())),                    # "Семя" для уникальности результата (можно убрать для повторяемости)
-            "aspectRatio": {"widthRatio": "2", "heightRatio": "1"}  # Соотношение сторон (по ТЗ)
+            "seed": str(int(time.time())),
+            "aspectRatio": {"widthRatio": "2", "heightRatio": "1"}
         },
-        "messages": [{"weight": "1", "text": prompt}]         # Передаём промпт
+        "messages": [{"weight": "1", "text": prompt[:250]}]  # обрезаем до 250 символов
     }
 
-    # 1. Запускаем генерацию (POST)
-    response = requests.post(url, headers=headers, json=data)
-    if response.status_code != 200:
-        raise Exception(f"Ошибка генерации: {response.status_code} {response.text}")
-
-    # 2. Получаем ID задачи (request_id)
-    request_id = response.json().get("id")
-    if not request_id:
-        raise Exception("Yandex Cloud не вернул ID задачи. Ответ: " + response.text)
-
-    # 3. Делаем паузу — ждём, пока картинка сгенерируется
-    time.sleep(10)  # Можно уменьшать, если будет достаточно быстро
-
-    # 4. Проверяем статус и результат
-    url_check = f"https://llm.api.cloud.yandex.net/operations/{request_id}"
-    headers_check = {"Authorization": f"Bearer {iam_token}"}
-    response_check = requests.get(url_check, headers=headers_check)
-
-    # 5. Если картинка готова, декодируем из base64
-    if (
-        response_check.status_code == 200
-        and "response" in response_check.json()
-        and "image" in response_check.json()["response"]
-    ):
-        image_base64 = response_check.json()["response"]["image"]
+    # --- Повторная попытка генерации (макс. 3 раза) ---
+    for attempt in range(3):
         try:
-            image_data = base64.b64decode(image_base64)
+            response = requests.post(url, headers=headers, json=data, timeout=15)
+            if response.status_code != 200:
+                logger.warning(f"[Yandex ART] Ошибка генерации: {response.status_code} {response.text}")
+                time.sleep(1)
+                continue
+
+            request_id = response.json().get("id")
+            if not request_id:
+                raise Exception("Yandex не вернул ID задачи. Ответ: " + response.text)
+
+            logger.info(f"[Yandex ART] Старт генерации. request_id={request_id}")
+            # --- Polling: ожидание завершения генерации ---
+            url_check = f"https://llm.api.cloud.yandex.net/operations/{request_id}"
+            headers_check = {"Authorization": f"Bearer {iam_token}"}
+
+            for poll_attempt in range(10):
+                time.sleep(2)
+                try:
+                    response_check = requests.get(url_check, headers=headers_check, timeout=10)
+                except requests.exceptions.RequestException as e:
+                    logger.warning(f"[Yandex ART] Ошибка при опросе: {e}")
+                    continue
+
+                if (
+                    response_check.status_code == 200 and
+                    "response" in response_check.json() and
+                    "image" in response_check.json()["response"]
+                ):
+                    image_base64 = response_check.json()["response"]["image"]
+                    logger.info("[Yandex ART] Картинка готова. Декодируем...")
+                    try:
+                        return base64.b64decode(image_base64)
+                    except Exception as e:
+                        raise Exception("Ошибка декодирования base64: " + str(e))
+
+            raise Exception("Истёк таймер ожидания генерации (polling timeout)")
+
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"[Yandex ART] Ошибка подключения: {e}")
+            time.sleep(2)
         except Exception as e:
-            raise Exception("Ошибка декодирования base64: " + str(e))
-        return image_data
-    else:
-        # Полная информация об ошибке (для лога)
-        raise Exception(
-            "Картинка не готова или ошибка в ответе Яндекса. "
-            f"status_code={response_check.status_code}, response={response_check.text}"
-        )
+            logger.warning(f"[Yandex ART] Ошибка генерации: {e}")
+            time.sleep(2)
+
+    raise Exception("❌ Не удалось получить изображение после 3 попыток")

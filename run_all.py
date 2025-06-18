@@ -1,33 +1,37 @@
-# Запускает параллельно Flask и Telegram bot
-# Telegram bot запускается через bot_runner.py
-# bot_runner.py перезапускает Telegram bot в случае вылетов, сбоев сети
-
+# --- run_all.py: Одновременный запуск Flask и Telegram бота с обработкой Ctrl+C ---
 import threading
 import subprocess
 import sys
+import signal
 
-print("PYTHON:", sys.executable)
+# Храним процессы для последующего завершения
+processes = []
 
-def run_flask():
-    try:
-        subprocess.run([sys.executable, "app.py"], check=True)
-    except Exception as e:
-        print(f"[Flask] Ошибка: {e}")
+# Запуск отдельного подпроцесса (Flask или bot_runner)
+def run_process(command: str):
+    proc = subprocess.Popen([sys.executable, command])
+    processes.append(proc)
+    proc.wait()  # ждём завершения процесса
 
-def run_bot():
-    # Используем bot_runner.py вместо bot.py
-    try:
-        subprocess.run([sys.executable, "bot_runner.py"], check=True)
-    except Exception as e:
-        print(f"[BotRunner] Ошибка: {e}")
+# Обработка сигналов остановки (Ctrl+C, SIGTERM)
+def shutdown(signum, frame):
+    print("\n⛔ Получен сигнал остановки. Завершаем все процессы...")
+    for proc in processes:
+        if proc.poll() is None:  # процесс ещё жив
+            proc.terminate()
+    sys.exit(0)
 
 if __name__ == "__main__":
-    t1 = threading.Thread(target=run_flask)
-    t2 = threading.Thread(target=run_bot)
+    # Назначаем обработчики сигналов
+    signal.signal(signal.SIGINT, shutdown)
+    signal.signal(signal.SIGTERM, shutdown)
+
+    # Запускаем Flask и Telegram в отдельных потоках
+    t1 = threading.Thread(target=run_process, args=("app.py",))
+    t2 = threading.Thread(target=run_process, args=("bot_runner.py",))
 
     t1.start()
     t2.start()
 
     t1.join()
     t2.join()
-
